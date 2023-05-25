@@ -2,7 +2,7 @@
 
 pragma solidity 0.8.17;
 
-import { DataTypes } from '../../libraries/DataTypes.sol';
+import {DataTypes} from "../../libraries/DataTypes.sol";
 
 /**
  * @title MentorHubStorage
@@ -15,5 +15,4 @@ import { DataTypes } from '../../libraries/DataTypes.sol';
 abstract contract MentorHubStorage {
     uint256 internal _mentorsCounter;
     mapping(uint256 => DataTypes.MentorStruct) internal _mentorById;
-
 }

@@ -2,9 +2,18 @@
 
 pragma solidity 0.8.17;
 
-import { DataTypes } from './DataTypes.sol';
+import {DataTypes} from "./DataTypes.sol";
 
 library Events {
+    /**
+     * @dev Emitted when the NFT contract's name and symbol are set at initialization.
+     *
+     * @param name The NFT name set.
+     * @param symbol The NFT symbol set.
+     * @param timestamp The current block timestamp.
+     */
+    event BaseInitialized(string name, string symbol, uint256 timestamp);
+
     /**
      * @dev Emitted when the MentorHub contract is set at initialization.
      *
@@ -37,10 +46,7 @@ library Events {
      * @param timestamp The current block timestamp.
      */
     event GovernanceSet(
-        address indexed caller,
-        address indexed prevGovernance,
-        address indexed newGovernance,
-        uint256 timestamp
+        address indexed caller, address indexed prevGovernance, address indexed newGovernance, uint256 timestamp
     );
 
     /**
@@ -53,9 +59,6 @@ library Events {
      * @param timestamp The current block timestamp.
      */
     event EmergencyAdminSet(
-        address indexed caller,
-        address indexed oldEmergencyAdmin,
-        address indexed newEmergencyAdmin,
-        uint256 timestamp
+        address indexed caller, address indexed oldEmergencyAdmin, address indexed newEmergencyAdmin, uint256 timestamp
     );
 }

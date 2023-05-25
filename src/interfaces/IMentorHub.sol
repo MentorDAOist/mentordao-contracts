@@ -2,7 +2,7 @@
 
 pragma solidity 0.8.17;
 
-import { DataTypes } from '../libraries/DataTypes.sol';
+import {DataTypes} from "../libraries/DataTypes.sol";
 
 /**
  * @title IMentorHub
@@ -15,11 +15,11 @@ interface IMentorHub {
     /**
      * @notice Initializes the MentorHub contract, setting the initial governance address.
      *
+     * @param name The name to set for the hub NFT.
+     * @param symbol The symbol to set for the hub NFT.
      * @param newGovernance The governance address to set.
      */
-    function initialize(
-        address newGovernance
-    ) external;
+    function initialize(string calldata name, string calldata symbol, address newGovernance) external;
 
     /**
      * @notice Sets the privileged governance role. This function can only be called by the current governance

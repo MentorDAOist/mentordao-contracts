@@ -41,6 +41,8 @@ library DataTypes {
      * @param imageURI The URI to be used for the profile's image.
      */
     struct MentorStruct {
+        address addr;
+        string name;
         string imageURI;
     }
 }

@@ -2,9 +2,9 @@
 
 pragma solidity 0.8.17;
 
-import { Events } from '../../libraries/Events.sol';
-import { DataTypes } from '../../libraries/DataTypes.sol';
-import { Errors } from '../../libraries/Errors.sol';
+import {Events} from "../../libraries/Events.sol";
+import {DataTypes} from "../../libraries/DataTypes.sol";
+import {Errors} from "../../libraries/Errors.sol";
 // import "@openzeppelin/contracts/governance/Governor.sol";
 
 /**
@@ -13,12 +13,12 @@ import { Errors } from '../../libraries/Errors.sol';
  *
  * @notice This is an abstract contract that implements internal MentorHub governence setting and validation.
  *
- * TODO: Multisig -> OZ Governor 
+ * TODO: Multisig -> OZ Governor
  */
 abstract contract MentorHubGov {
     address internal _governance;
     address internal _emergencyAdmin;
-    
+
     modifier onlyGovernance() {
         _validateCallerIsGovernance();
         _;
@@ -38,12 +38,7 @@ abstract contract MentorHubGov {
     function _setEmergencyAdmin(address newEmergencyAdmin) internal {
         address prevEmergencyAdmin = _emergencyAdmin;
         _emergencyAdmin = newEmergencyAdmin;
-        emit Events.EmergencyAdminSet(
-            msg.sender,
-            prevEmergencyAdmin,
-            newEmergencyAdmin,
-            block.timestamp
-        );
+        emit Events.EmergencyAdminSet(msg.sender, prevEmergencyAdmin, newEmergencyAdmin, block.timestamp);
     }
 
     function _validateCallerIsGovernance() internal view {

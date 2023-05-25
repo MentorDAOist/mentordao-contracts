@@ -2,14 +2,15 @@
 
 pragma solidity 0.8.17;
 
-import { IMentorHub } from '../interfaces/IMentorHub.sol';
-import { MentorHubMultiState } from './base/MentorHubMultiState.sol';
-import { MentorHubGov } from './base/MentorHubGov.sol';
-import { MentorHubStorage } from './storage/MentorHubStorage.sol';
-import { VersionedInitializable } from '../upgradeability/VersionedInitializable.sol';
-import { DataTypes } from '../libraries/DataTypes.sol';
-import { Events } from '../libraries/Events.sol';
-import { Errors } from '../libraries/Errors.sol';
+import {IMentorHub} from "../interfaces/IMentorHub.sol";
+import {MentorNFTBase} from "./base/MentorNFTBase.sol";
+import {MentorHubMultiState} from "./base/MentorHubMultiState.sol";
+import {MentorHubGov} from "./base/MentorHubGov.sol";
+import {MentorHubStorage} from "./storage/MentorHubStorage.sol";
+import {VersionedInitializable} from "../upgradeability/VersionedInitializable.sol";
+import {DataTypes} from "../libraries/DataTypes.sol";
+import {Events} from "../libraries/Events.sol";
+import {Errors} from "../libraries/Errors.sol";
 
 /**
  * @title MentorHub
@@ -18,12 +19,21 @@ import { Errors } from '../libraries/Errors.sol';
  * @notice This is the main entrypoint of the MentorDAO Protocol. It contains governance functionality as well as
  * donating and mentor interaction functionality.
  */
-contract MentorHub is IMentorHub, MentorHubGov, MentorHubMultiState, MentorHubStorage, VersionedInitializable {
-
+contract MentorHub is
+    IMentorHub,
+    MentorNFTBase,
+    MentorHubGov,
+    MentorHubMultiState,
+    MentorHubStorage,
+    VersionedInitializable
+{
     /// @inheritdoc IMentorHub
-    function initialize(
-        address newGovernance
-    ) external override initializer {
+    function initialize(string calldata name, string calldata symbol, address newGovernance)
+        external
+        override
+        initializer
+    {
+        super._initialize(name, symbol);
         _setState(DataTypes.ProtocolState.Paused);
         _setGovernance(newGovernance);
     }
@@ -32,10 +42,10 @@ contract MentorHub is IMentorHub, MentorHubGov, MentorHubMultiState, MentorHubSt
     // ******VERSIONING*******
     // ***********************
 
-    uint256 internal constant REVISION = 1;
+    uint256 internal constant _REVISION = 1;
 
-    function getRevision() internal pure virtual override returns (uint256) {
-        return REVISION;
+    function _getRevision() internal pure virtual override returns (uint256) {
+        return _REVISION;
     }
 
     // ***********************
@@ -59,11 +69,11 @@ contract MentorHub is IMentorHub, MentorHubGov, MentorHubMultiState, MentorHubSt
     /// @inheritdoc IMentorHub
     function setState(DataTypes.ProtocolState newState) external override onlyGovernanceOrEmergencyAdmin {
         if (msg.sender == _emergencyAdmin) {
-            if (newState == DataTypes.ProtocolState.Unpaused)
+            if (newState == DataTypes.ProtocolState.Unpaused) {
                 revert Errors.EmergencyAdminCannotUnpause();
+            }
             _validateNotPaused();
         }
         _setState(newState);
     }
-
 }
