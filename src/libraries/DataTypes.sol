@@ -38,11 +38,31 @@ library DataTypes {
     /**
      * @notice A struct containing mentor data.
      *
-     * @param imageURI The URI to be used for the profile's image.
+     * @param addr The address.
      */
-    struct MentorStruct {
+    struct Mentor {
         address addr;
-        string name;
+        string handle;
+        string fullname;
+        string position;
+        string aboutMe;
         string imageURI;
+        uint256 usdPerSession;
+        uint256 sessionDuration;
+    }
+
+    /**
+     * @notice A struct containing the parameters required for the `signUpMentor()` function.
+     *
+     */
+    struct SignUpMentorData {
+        address addr;
+        string handle;
+        string fullname;
+        string position;
+        string aboutMe;
+        string imageURI;
+        uint256 usdPerSession;
+        uint256 sessionDuration;
     }
 }

@@ -13,6 +13,11 @@ import {DataTypes} from "../../libraries/DataTypes.sol";
  * storage variables should be done solely at the bottom of this contract.
  */
 abstract contract MentorHubStorage {
+    mapping(address => bool) internal _mentorWhitelisted;
+
+    mapping(bytes32 => uint256) internal _mentorIdByHandleHash;
+    mapping(address => uint256) internal _mentorIdByAddress;
+    mapping(uint256 => DataTypes.Mentor) internal _mentorById;
+
     uint256 internal _mentorsCounter;
-    mapping(uint256 => DataTypes.MentorStruct) internal _mentorById;
 }

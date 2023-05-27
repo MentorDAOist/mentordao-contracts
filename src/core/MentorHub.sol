@@ -2,12 +2,16 @@
 
 pragma solidity 0.8.17;
 
-import {IMentorHub} from "../interfaces/IMentorHub.sol";
-import {MentorNFTBase} from "./base/MentorNFTBase.sol";
-import {MentorHubMultiState} from "./base/MentorHubMultiState.sol";
-import {MentorHubGov} from "./base/MentorHubGov.sol";
+import "openzeppelin-contracts-upgradeable/contracts/proxy/utils/Initializable.sol";
+
+import {MentorNFT} from "./base/MentorNFT.sol";
+import {MentorGov} from "./base/MentorGov.sol";
+import {MentorMultiState} from "./base/MentorMultiState.sol";
 import {MentorHubStorage} from "./storage/MentorHubStorage.sol";
-import {VersionedInitializable} from "../upgradeability/VersionedInitializable.sol";
+
+import {IMentorHub} from "../interfaces/IMentorHub.sol";
+
+import {SignUpMentorLogic} from "../libraries/SignUpMentorLogic.sol";
 import {DataTypes} from "../libraries/DataTypes.sol";
 import {Events} from "../libraries/Events.sol";
 import {Errors} from "../libraries/Errors.sol";
@@ -17,40 +21,28 @@ import {Errors} from "../libraries/Errors.sol";
  * @author MentorDAO
  *
  * @notice This is the main entrypoint of the MentorDAO Protocol. It contains governance functionality as well as
- * donating and mentor interaction functionality.
+ * mentors & donation functionality.
  */
-contract MentorHub is
-    IMentorHub,
-    MentorNFTBase,
-    MentorHubGov,
-    MentorHubMultiState,
-    MentorHubStorage,
-    VersionedInitializable
-{
+contract MentorHub is Initializable, MentorNFT, MentorGov, MentorMultiState, MentorHubStorage, IMentorHub {
+    /// @custom:oz-upgrades-unsafe-allow constructor
+    constructor() {
+        _disableInitializers();
+    }
+
     /// @inheritdoc IMentorHub
-    function initialize(string calldata name, string calldata symbol, address newGovernance)
+    function initialize(string calldata name, string calldata symbol, address governance, address emergencyAdmin)
         external
         override
         initializer
     {
-        super._initialize(name, symbol);
-        _setState(DataTypes.ProtocolState.Paused);
-        _setGovernance(newGovernance);
+        MentorNFT._initialize(name, symbol);
+        MentorGov._initialize(governance, emergencyAdmin);
+        MentorMultiState._initialize(DataTypes.ProtocolState.Paused);
     }
 
-    // ***********************
-    // ******VERSIONING*******
-    // ***********************
-
-    uint256 internal constant _REVISION = 1;
-
-    function _getRevision() internal pure virtual override returns (uint256) {
-        return _REVISION;
-    }
-
-    // ***********************
-    // *****GOV FUNCTIONS*****
-    // ***********************
+    /// ***********************
+    /// *****GOV FUNCTIONS*****
+    /// ***********************
 
     /// @inheritdoc IMentorHub
     function setGovernance(address newGovernance) external override onlyGovernance {
@@ -62,10 +54,6 @@ contract MentorHub is
         _setEmergencyAdmin(newEmergencyAdmin);
     }
 
-    // ***********************
-    // *****MULTI STATE*******
-    // ***********************
-
     /// @inheritdoc IMentorHub
     function setState(DataTypes.ProtocolState newState) external override onlyGovernanceOrEmergencyAdmin {
         if (msg.sender == _emergencyAdmin) {
@@ -75,5 +63,63 @@ contract MentorHub is
             _validateNotPaused();
         }
         _setState(newState);
+    }
+
+    /// @inheritdoc IMentorHub
+    function whitelistMentor(address mentor, bool whitelist) external override onlyGovernance {
+        _mentorWhitelisted[mentor] = whitelist;
+        emit Events.MentorWhitelisted(mentor, whitelist);
+    }
+
+    /// **************************
+    /// *****MENTOR FUNCTIONS*****
+    /// **************************
+
+    modifier onlyWhitelistedMentor() {
+        if (!_mentorWhitelisted[msg.sender]) revert Errors.MentorNotWhitelisted();
+        _;
+    }
+
+    /// @inheritdoc IMentorHub
+    function signUpMentor(DataTypes.SignUpMentorData calldata data)
+        external
+        override
+        whenNotPaused
+        onlyWhitelistedMentor
+        returns (uint256)
+    {
+        unchecked {
+            uint256 mentorId = ++_mentorsCounter;
+
+            _mint(msg.sender, mentorId);
+
+            SignUpMentorLogic.signUpMentor(mentorId, data, _mentorIdByHandleHash, _mentorIdByAddress, _mentorById);
+
+            return mentorId;
+        }
+    }
+
+    /// *********************************
+    /// *****EXTERNAL VIEW FUNCTIONS*****
+    /// *********************************
+
+    /// @inheritdoc IMentorHub
+    function isMentorWhitelisted(address mentor) external view override returns (bool) {
+        return _mentorWhitelisted[mentor];
+    }
+
+    /// @inheritdoc IMentorHub
+    function getGovernance() external view override returns (address) {
+        return _governance;
+    }
+
+    /// @inheritdoc IMentorHub
+    function getEmergencyAdmin() external view override returns (address) {
+        return _emergencyAdmin;
+    }
+
+    /// @inheritdoc IMentorHub
+    function getMentor(uint256 mentorId) external view override returns (DataTypes.Mentor memory) {
+        return _mentorById[mentorId];
     }
 }

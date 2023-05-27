@@ -13,13 +13,16 @@ import {DataTypes} from "../libraries/DataTypes.sol";
  */
 interface IMentorHub {
     /**
-     * @notice Initializes the MentorHub contract, setting the initial governance address.
+     * @notice Initializes the MentorHub contract, setting the initial governance and emergency admin addresses as well as the name and symbol in
+     * the MentorNFT contract.
      *
      * @param name The name to set for the hub NFT.
      * @param symbol The symbol to set for the hub NFT.
-     * @param newGovernance The governance address to set.
+     * @param governance The governance address to set.
+     * @param emergencyAdmin The emergency admin address to set.
      */
-    function initialize(string calldata name, string calldata symbol, address newGovernance) external;
+    function initialize(string calldata name, string calldata symbol, address governance, address emergencyAdmin)
+        external;
 
     /**
      * @notice Sets the privileged governance role. This function can only be called by the current governance
@@ -48,4 +51,30 @@ interface IMentorHub {
      * @param newState The state to set, as a member of the ProtocolState enum.
      */
     function setState(DataTypes.ProtocolState newState) external;
+
+    /**
+     * @notice Whitelists the mentor address to allow profile minting. This function
+     * can only be called by the governance address.
+     *
+     * @param mentor The mentor's address to whitelist.
+     * @param whitelist The boolean to set whitelist state.
+     */
+    function whitelistMentor(address mentor, bool whitelist) external;
+
+    /**
+     * @notice Creates a mentor profile with the specified parameters, minting a mentor NFT to the given recipient. This
+     * function must be called by/for a whitelisted mentor. An address can hold only a single mentor NFT.
+     *
+     * @param data The parameters of {SignUpMentorData} type.
+     * @return mentorId.
+     */
+    function signUpMentor(DataTypes.SignUpMentorData calldata data) external returns (uint256);
+
+    function isMentorWhitelisted(address mentor) external view returns (bool);
+
+    function getGovernance() external view returns (address);
+
+    function getEmergencyAdmin() external view returns (address);
+
+    function getMentor(uint256 mentorId) external view returns (DataTypes.Mentor memory);
 }
