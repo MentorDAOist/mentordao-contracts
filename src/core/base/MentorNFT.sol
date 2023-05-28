@@ -27,4 +27,8 @@ abstract contract MentorNFT is Initializable, ERC721Upgradeable {
         if (balanceOf(to) >= 1) revert Errors.MentorAlreadyRegistered();
         super._beforeTokenTransfer(from, to, tokenId, batchSize);
     }
+
+    function _validateCallerIsMentor(uint256 mentorId) internal view {
+        if (msg.sender != ownerOf(mentorId)) revert Errors.NotMentor();
+    }
 }

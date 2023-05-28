@@ -11,10 +11,10 @@ import {MentorHubStorage} from "./storage/MentorHubStorage.sol";
 
 import {IMentorHub} from "../interfaces/IMentorHub.sol";
 
-import {SignUpMentorLogic} from "../libraries/SignUpMentorLogic.sol";
 import {DataTypes} from "../libraries/DataTypes.sol";
 import {Events} from "../libraries/Events.sol";
 import {Errors} from "../libraries/Errors.sol";
+import {MentorProfile} from "../libraries/MentorProfile.sol";
 
 /**
  * @title MentorHub
@@ -76,12 +76,17 @@ contract MentorHub is Initializable, MentorNFT, MentorGov, MentorMultiState, Men
     /// **************************
 
     modifier onlyWhitelistedMentor() {
-        if (!_mentorWhitelisted[msg.sender]) revert Errors.MentorNotWhitelisted();
+        if (!_mentorWhitelisted[msg.sender]) revert Errors.NotWhitelistedMentor();
+        _;
+    }
+
+    modifier onlyMentor() {
+        if (_mentorIdByAddress[msg.sender] == 0) revert Errors.NotMentor();
         _;
     }
 
     /// @inheritdoc IMentorHub
-    function signUpMentor(DataTypes.SignUpMentorData calldata data)
+    function createMentorProfile(DataTypes.Mentor calldata mentorData)
         external
         override
         whenNotPaused
@@ -90,23 +95,21 @@ contract MentorHub is Initializable, MentorNFT, MentorGov, MentorMultiState, Men
     {
         unchecked {
             uint256 mentorId = ++_mentorsCounter;
-
             _mint(msg.sender, mentorId);
-
-            SignUpMentorLogic.signUpMentor(mentorId, data, _mentorIdByHandleHash, _mentorIdByAddress, _mentorById);
-
+            MentorProfile.create(mentorId, mentorData, _mentorIdByHandleHash, _mentorIdByAddress, _mentorById);
             return mentorId;
         }
+    }
+
+    /// @inheritdoc IMentorHub
+    function updateMentorProfile(DataTypes.Mentor calldata mentorData) external override whenNotPaused onlyMentor {
+        uint256 mentorId = _mentorIdByAddress[msg.sender];
+        MentorProfile.update(mentorId, mentorData, _mentorIdByHandleHash, _mentorById);
     }
 
     /// *********************************
     /// *****EXTERNAL VIEW FUNCTIONS*****
     /// *********************************
-
-    /// @inheritdoc IMentorHub
-    function isMentorWhitelisted(address mentor) external view override returns (bool) {
-        return _mentorWhitelisted[mentor];
-    }
 
     /// @inheritdoc IMentorHub
     function getGovernance() external view override returns (address) {
@@ -119,7 +122,30 @@ contract MentorHub is Initializable, MentorNFT, MentorGov, MentorMultiState, Men
     }
 
     /// @inheritdoc IMentorHub
+    function isMentorWhitelisted(address mentor) external view override returns (bool) {
+        return _mentorWhitelisted[mentor];
+    }
+
+    /// @inheritdoc IMentorHub
     function getMentor(uint256 mentorId) external view override returns (DataTypes.Mentor memory) {
         return _mentorById[mentorId];
+    }
+
+    /// @inheritdoc IMentorHub
+    function getMentorIdByHandle(string calldata handle) external view override returns (uint256) {
+        bytes32 handleHash = keccak256(bytes(handle));
+        return _mentorIdByHandleHash[handleHash];
+    }
+
+    /// @inheritdoc IMentorHub
+    function getMentorIdByAddress(address addr) external view override returns (uint256) {
+        return _mentorIdByAddress[addr];
+    }
+
+    /**
+     * @dev Overrides the ERC721 tokenURI function to return the associated URI with a given mentor profile.
+     */
+    function tokenURI(uint256 tokenId) public view override returns (string memory) {
+        return MentorProfile.getTokenURI(tokenId, ownerOf(tokenId), _mentorById[tokenId]);
     }
 }

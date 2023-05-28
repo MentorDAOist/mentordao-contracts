@@ -65,16 +65,22 @@ interface IMentorHub {
      * @notice Creates a mentor profile with the specified parameters, minting a mentor NFT to the given recipient. This
      * function must be called by/for a whitelisted mentor. An address can hold only a single mentor NFT.
      *
-     * @param data The parameters of {SignUpMentorData} type.
+     * @param mentorData The parameters of {Mentor} type.
      * @return mentorId.
      */
-    function signUpMentor(DataTypes.SignUpMentorData calldata data) external returns (uint256);
+    function createMentorProfile(DataTypes.Mentor calldata mentorData) external returns (uint256);
 
-    function isMentorWhitelisted(address mentor) external view returns (bool);
+    function updateMentorProfile(DataTypes.Mentor calldata mentorData) external;
 
     function getGovernance() external view returns (address);
 
     function getEmergencyAdmin() external view returns (address);
 
+    function isMentorWhitelisted(address mentor) external view returns (bool);
+
     function getMentor(uint256 mentorId) external view returns (DataTypes.Mentor memory);
+
+    function getMentorIdByHandle(string calldata handle) external view returns (uint256);
+
+    function getMentorIdByAddress(address addr) external view returns (uint256);
 }

@@ -37,26 +37,8 @@ library DataTypes {
 
     /**
      * @notice A struct containing mentor data.
-     *
-     * @param addr The address.
      */
     struct Mentor {
-        address addr;
-        string handle;
-        string fullname;
-        string position;
-        string aboutMe;
-        string imageURI;
-        uint256 usdPerSession;
-        uint256 sessionDuration;
-    }
-
-    /**
-     * @notice A struct containing the parameters required for the `signUpMentor()` function.
-     *
-     */
-    struct SignUpMentorData {
-        address addr;
         string handle;
         string fullname;
         string position;

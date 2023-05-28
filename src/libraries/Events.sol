@@ -47,16 +47,26 @@ library Events {
     event MentorWhitelisted(address indexed mentor, bool indexed whitelist);
 
     /**
-     * @dev Emitted when the mentor is signed up.
-     *
-     * @param mentorId The newly created profile's token ID.
-     * @param addr The mentor, who created the token with the given mentor ID.
-     * @param handle The handle set for the mentor.
-     * @param imageURI The image uri set for the mentor.
+     * @dev Emitted when the mentor profile is created.
      */
-    event MentorSignedUp(
-        uint256 indexed mentorId,
+    event MentorProfileCreated(
         address indexed addr,
+        uint256 indexed mentorId,
+        string indexed handle,
+        string fullname,
+        string position,
+        string aboutMe,
+        string imageURI,
+        uint256 usdPerSession,
+        uint256 sessionDuration
+    );
+
+    /**
+     * @dev Emitted when the mentor profile data is updated.
+     */
+    event MentorProfileUpdated(
+        address indexed addr,
+        uint256 indexed mentorId,
         string indexed handle,
         string fullname,
         string position,

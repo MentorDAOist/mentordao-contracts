@@ -3,6 +3,7 @@
 pragma solidity 0.8.17;
 
 library Errors {
+    error Paused();
     error SignatureExpired();
     error ZeroSpender();
     error SignatureInvalid();
@@ -11,14 +12,13 @@ library Errors {
     error NotGovernance();
     error NotGovernanceOrEmergencyAdmin();
     error EmergencyAdminCannotUnpause();
-    error MentorNotWhitelisted();
+    error NotWhitelistedMentor();
+    error NotMentor();
     error MentorNFTNotTransferable();
     error MentorAlreadyRegistered();
     error HandleTaken();
     error HandleLengthInvalid();
     error HandleContainsInvalidCharacters();
     error HandleFirstCharInvalid();
-
-    // State Errors
-    error Paused();
+    error ImageURILengthInvalid();
 }
