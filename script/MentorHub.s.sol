@@ -4,7 +4,6 @@ pragma solidity ^0.8.17;
 
 import "forge-std/Script.sol";
 import "../src/core/MentorHub.sol";
-import "openzeppelin-contracts-upgradeable/contracts/proxy/utils/Initializable.sol";
 
 contract MentorHubScript is Script {
     function run() external {

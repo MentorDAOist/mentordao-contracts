@@ -15,7 +15,7 @@ import {Errors} from "../libraries/Errors.sol";
  * It is overrided to be non-transferable and minted only once per address.
  */
 abstract contract MentorNFT is ERC721 {
-    constructor(string calldata name, string calldata symbol) ERC721(name, symbol) {}
+    constructor(string memory name, string memory symbol) ERC721(name, symbol) {}
 
     // function _initialize(string calldata name, string calldata symbol) internal onlyInitializing {
     //     __ERC721_init(name, symbol);

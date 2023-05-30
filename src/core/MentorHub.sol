@@ -26,12 +26,16 @@ import {MentorProfile} from "../libraries/MentorProfile.sol";
 contract MentorHub is MentorNFT, MentorGov, MentorMultiState, MentorHubStorage, IMentorHub {
     /// @custom:oz-upgrades-unsafe-allow constructor
     constructor(
-        string calldata name,
-        string calldata symbol,
+        string memory name,
+        string memory symbol,
         address governance,
         address emergencyAdmin,
         address dispatcher
-    ) MentorNFT(name, symbol) {
+    )
+        MentorNFT(name, symbol)
+        MentorGov(governance, emergencyAdmin, dispatcher)
+        MentorMultiState(DataTypes.ProtocolState.Unpaused)
+    {
         // _disableInitializers();
     }
 
