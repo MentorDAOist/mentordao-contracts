@@ -7,8 +7,8 @@ import {Constants} from "./Constants.sol";
 import {Events} from "./Events.sol";
 import {Errors} from "./Errors.sol";
 
-import "openzeppelin-contracts-upgradeable/contracts/utils/Base64Upgradeable.sol";
-import "openzeppelin-contracts-upgradeable/contracts/utils/StringsUpgradeable.sol";
+import "openzeppelin-contracts/contracts/utils/Base64.sol";
+import "openzeppelin-contracts/contracts/utils/Strings.sol";
 
 /**
  * @title MentorProfile
@@ -101,7 +101,7 @@ library MentorProfile {
         return string(
             abi.encodePacked(
                 "data:application/json;base64,",
-                Base64Upgradeable.encode(
+                Base64.encode(
                     abi.encodePacked(
                         '{"name":"',
                         handleWithAtSymbol,
@@ -110,9 +110,9 @@ library MentorProfile {
                         ' - Mentor at MentorDAO ","image":"',
                         mentorData.imageURI,
                         '","attributes":[{"trait_type":"id","value":"#',
-                        StringsUpgradeable.toString(mentorId),
+                        Strings.toString(mentorId),
                         '"},{"trait_type":"owner","value":"',
-                        StringsUpgradeable.toHexString(uint160(owner)),
+                        Strings.toHexString(uint160(owner)),
                         '"},{"trait_type":"handle","value":"',
                         handleWithAtSymbol,
                         '"},{"trait_type":"fullname","value":"',
@@ -124,9 +124,9 @@ library MentorProfile {
                         '"},{"trait_type":"calendly","value":"',
                         mentorData.calendly,
                         '"},{"trait_type":"usdPerSession","value":"',
-                        StringsUpgradeable.toString(mentorData.usdPerSession),
+                        Strings.toString(mentorData.usdPerSession),
                         '"},{"trait_type":"sessionDuration","value":"',
-                        StringsUpgradeable.toString(mentorData.sessionDuration),
+                        Strings.toString(mentorData.sessionDuration),
                         '"},{"trait_type":"nonprofit","value":"',
                         mentorData.nonprofit,
                         '"}]}'

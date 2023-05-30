@@ -2,7 +2,7 @@
 
 pragma solidity 0.8.17;
 
-import "openzeppelin-contracts-upgradeable/contracts/proxy/utils/Initializable.sol";
+// import "openzeppelin-contracts-upgradeable/contracts/proxy/utils/Initializable.sol";
 // import "openzeppelin-contracts-upgradeable/contracts/governance/GovernorUpgradeable.sol";
 
 import {Events} from "../libraries/Events.sol";
@@ -17,16 +17,22 @@ import {Errors} from "../libraries/Errors.sol";
  *
  * TODO: Multisig -> OZ Governor
  */
-abstract contract MentorGov is Initializable {
+abstract contract MentorGov {
     address internal _governance;
     address internal _emergencyAdmin;
     address internal _dispatcher;
 
-    function _initialize(address governance, address emergencyAdmin, address dispatcher) internal onlyInitializing {
+    constructor(address governance, address emergencyAdmin, address dispatcher) {
         _setGovernance(governance);
         _setEmergencyAdmin(emergencyAdmin);
         _setDispatcher(dispatcher);
     }
+
+    // function _initialize(address governance, address emergencyAdmin, address dispatcher) internal onlyInitializing {
+    //     _setGovernance(governance);
+    //     _setEmergencyAdmin(emergencyAdmin);
+    //     _setDispatcher(dispatcher);
+    // }
 
     modifier onlyGovernance() {
         _validateCallerIsGovernance();

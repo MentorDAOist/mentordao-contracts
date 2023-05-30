@@ -2,7 +2,7 @@
 
 pragma solidity 0.8.17;
 
-import "openzeppelin-contracts-upgradeable/contracts/proxy/utils/Initializable.sol";
+// import "openzeppelin-contracts-upgradeable/contracts/proxy/utils/Initializable.sol";
 
 import {MentorNFT} from "./MentorNFT.sol";
 import {MentorGov} from "./MentorGov.sol";
@@ -23,24 +23,30 @@ import {MentorProfile} from "../libraries/MentorProfile.sol";
  * @notice This is the main entrypoint of the MentorDAO Protocol. It contains governance functionality as well as
  * mentors & donation functionality.
  */
-contract MentorHub is Initializable, MentorNFT, MentorGov, MentorMultiState, MentorHubStorage, IMentorHub {
+contract MentorHub is MentorNFT, MentorGov, MentorMultiState, MentorHubStorage, IMentorHub {
     /// @custom:oz-upgrades-unsafe-allow constructor
-    constructor() {
-        _disableInitializers();
-    }
-
-    /// @inheritdoc IMentorHub
-    function initialize(
+    constructor(
         string calldata name,
         string calldata symbol,
         address governance,
         address emergencyAdmin,
         address dispatcher
-    ) external override initializer {
-        MentorNFT._initialize(name, symbol);
-        MentorGov._initialize(governance, emergencyAdmin, dispatcher);
-        MentorMultiState._initialize(DataTypes.ProtocolState.Paused);
+    ) MentorNFT(name, symbol) {
+        // _disableInitializers();
     }
+
+    // /// @inheritdoc IMentorHub
+    // function initialize(
+    //     string calldata name,
+    //     string calldata symbol,
+    //     address governance,
+    //     address emergencyAdmin,
+    //     address dispatcher
+    // ) external override initializer {
+    //     MentorNFT._initialize(name, symbol);
+    //     MentorGov._initialize(governance, emergencyAdmin, dispatcher);
+    //     MentorMultiState._initialize(DataTypes.ProtocolState.Paused);
+    // }
 
     /// ***********************
     /// *****GOV FUNCTIONS*****

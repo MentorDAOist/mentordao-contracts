@@ -2,7 +2,7 @@
 
 pragma solidity 0.8.17;
 
-import "openzeppelin-contracts-upgradeable/contracts/proxy/utils/Initializable.sol";
+// import "openzeppelin-contracts-upgradeable/contracts/proxy/utils/Initializable.sol";
 
 import {Events} from "../libraries/Events.sol";
 import {DataTypes} from "../libraries/DataTypes.sol";
@@ -14,17 +14,21 @@ import {Errors} from "../libraries/Errors.sol";
  *
  * @notice This is an abstract contract that implements internal protocol state setting and validation.
  */
-abstract contract MentorMultiState is Initializable {
+abstract contract MentorMultiState {
     DataTypes.ProtocolState private _state;
 
-    /**
-     * @notice Initializes the MentorMultiState contract, setting the initial state.
-     *
-     * @param state The initial protocol state.
-     */
-    function _initialize(DataTypes.ProtocolState state) internal onlyInitializing {
+    constructor(DataTypes.ProtocolState state) {
         _setState(state);
     }
+
+    // /**
+    //  * @notice Initializes the MentorMultiState contract, setting the initial state.
+    //  *
+    //  * @param state The initial protocol state.
+    //  */
+    // function _initialize(DataTypes.ProtocolState state) internal onlyInitializing {
+    //     _setState(state);
+    // }
 
     modifier whenNotPaused() {
         _validateNotPaused();

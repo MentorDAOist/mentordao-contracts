@@ -12,23 +12,23 @@ import {DataTypes} from "../libraries/DataTypes.sol";
  * You'll find all the events and external functions, as well as the reasoning behind them here.
  */
 interface IMentorHub {
-    /**
-     * @notice Initializes the MentorHub contract, setting the initial governance and emergency admin addresses as well as the name and symbol in
-     * the MentorNFT contract.
-     *
-     * @param name The name to set for the hub NFT.
-     * @param symbol The symbol to set for the hub NFT.
-     * @param governance The governance address to set.
-     * @param emergencyAdmin The emergency admin address to set.
-     * @param dispatcher The address of wallet that verifies crosschain donations in BE and reflect it in protocol.
-     */
-    function initialize(
-        string calldata name,
-        string calldata symbol,
-        address governance,
-        address emergencyAdmin,
-        address dispatcher
-    ) external;
+    // /**
+    //  * @notice Initializes the MentorHub contract, setting the initial governance and emergency admin addresses as well as the name and symbol in
+    //  * the MentorNFT contract.
+    //  *
+    //  * @param name The name to set for the hub NFT.
+    //  * @param symbol The symbol to set for the hub NFT.
+    //  * @param governance The governance address to set.
+    //  * @param emergencyAdmin The emergency admin address to set.
+    //  * @param dispatcher The address of wallet that verifies crosschain donations in BE and reflect it in protocol.
+    //  */
+    // function initialize(
+    //     string calldata name,
+    //     string calldata symbol,
+    //     address governance,
+    //     address emergencyAdmin,
+    //     address dispatcher
+    // ) external;
 
     /**
      * @notice Sets the privileged governance role. This function can only be called by the current governance
