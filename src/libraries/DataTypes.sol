@@ -37,6 +37,16 @@ library DataTypes {
 
     /**
      * @notice A struct containing mentor data.
+     *
+     * @param handle The human-readable and unique username.
+     * @param fullname The full name displayed on the website.
+     * @param position The working position or the expertise. Displayed as a subtitle.
+     * @param aboutMe The bio.
+     * @param imageURI The image URI. IPFS by default.
+     * @param calendly The calendly id to book a session in sync with web2 calendars.
+     * @param usdPerSession The USD amount to be donated during a session booking.
+     * @param sessionDuration The session duration in minutes.
+     * @param nonprofit The nonprofit ID on Endaoment / Giveth / Gitcoin to donate funds to.
      */
     struct Mentor {
         string handle;
@@ -44,7 +54,15 @@ library DataTypes {
         string position;
         string aboutMe;
         string imageURI;
+        string calendly;
         uint256 usdPerSession;
         uint256 sessionDuration;
+        string nonprofit;
+    }
+
+    struct BookSessionData {
+        uint256 mentorId;
+        address mentee;
+        bytes32 donationTxHash;
     }
 }

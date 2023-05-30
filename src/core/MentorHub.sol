@@ -4,9 +4,9 @@ pragma solidity 0.8.17;
 
 import "openzeppelin-contracts-upgradeable/contracts/proxy/utils/Initializable.sol";
 
-import {MentorNFT} from "./base/MentorNFT.sol";
-import {MentorGov} from "./base/MentorGov.sol";
-import {MentorMultiState} from "./base/MentorMultiState.sol";
+import {MentorNFT} from "./MentorNFT.sol";
+import {MentorGov} from "./MentorGov.sol";
+import {MentorMultiState} from "./MentorMultiState.sol";
 import {MentorHubStorage} from "./storage/MentorHubStorage.sol";
 
 import {IMentorHub} from "../interfaces/IMentorHub.sol";
@@ -30,13 +30,15 @@ contract MentorHub is Initializable, MentorNFT, MentorGov, MentorMultiState, Men
     }
 
     /// @inheritdoc IMentorHub
-    function initialize(string calldata name, string calldata symbol, address governance, address emergencyAdmin)
-        external
-        override
-        initializer
-    {
+    function initialize(
+        string calldata name,
+        string calldata symbol,
+        address governance,
+        address emergencyAdmin,
+        address dispatcher
+    ) external override initializer {
         MentorNFT._initialize(name, symbol);
-        MentorGov._initialize(governance, emergencyAdmin);
+        MentorGov._initialize(governance, emergencyAdmin, dispatcher);
         MentorMultiState._initialize(DataTypes.ProtocolState.Paused);
     }
 
@@ -52,6 +54,11 @@ contract MentorHub is Initializable, MentorNFT, MentorGov, MentorMultiState, Men
     /// @inheritdoc IMentorHub
     function setEmergencyAdmin(address newEmergencyAdmin) external override onlyGovernance {
         _setEmergencyAdmin(newEmergencyAdmin);
+    }
+
+    /// @inheritdoc IMentorHub
+    function setDispatcher(address newDispatcher) external override onlyGovernance {
+        _setDispatcher(newDispatcher);
     }
 
     /// @inheritdoc IMentorHub
@@ -105,6 +112,18 @@ contract MentorHub is Initializable, MentorNFT, MentorGov, MentorMultiState, Men
     function updateMentorProfile(DataTypes.Mentor calldata mentorData) external override whenNotPaused onlyMentor {
         uint256 mentorId = _mentorIdByAddress[msg.sender];
         MentorProfile.update(mentorId, mentorData, _mentorIdByHandleHash, _mentorById);
+    }
+
+    /// ******************************
+    /// *****DISPATCHER FUNCTIONS*****
+    /// ******************************
+
+    /// @inheritdoc IMentorHub
+    function emitSessionBooked(DataTypes.BookSessionData calldata vars) external onlyDispatcher {
+        DataTypes.Mentor memory mentor = _mentorById[vars.mentorId];
+        emit Events.SessionBooked(
+            vars.mentorId, vars.mentee, vars.donationTxHash, mentor.usdPerSession, mentor.nonprofit, block.timestamp
+        );
     }
 
     /// *********************************

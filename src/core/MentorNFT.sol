@@ -5,7 +5,7 @@ pragma solidity ^0.8.17;
 import "openzeppelin-contracts-upgradeable/contracts/proxy/utils/Initializable.sol";
 import "openzeppelin-contracts-upgradeable/contracts/token/ERC721/ERC721Upgradeable.sol";
 
-import {Errors} from "../../libraries/Errors.sol";
+import {Errors} from "../libraries/Errors.sol";
 
 /**
  * @title MentorNFT

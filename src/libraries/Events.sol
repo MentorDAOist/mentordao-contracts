@@ -39,6 +39,11 @@ library Events {
     );
 
     /**
+     * @dev Emitted when the dispatcher is changed.
+     */
+    event DispatcherSet(address indexed caller, address indexed oldDispatcher, address indexed newDispatcher);
+
+    /**
      * @dev Emitted when the mentor address is whitelisted.
      *
      * @param mentor The mentor's address to whitelist.
@@ -50,29 +55,45 @@ library Events {
      * @dev Emitted when the mentor profile is created.
      */
     event MentorProfileCreated(
-        address indexed addr,
+        address indexed owner,
         uint256 indexed mentorId,
         string indexed handle,
         string fullname,
         string position,
         string aboutMe,
         string imageURI,
+        string calendly,
         uint256 usdPerSession,
-        uint256 sessionDuration
+        uint256 sessionDuration,
+        string nonprofit
     );
 
     /**
      * @dev Emitted when the mentor profile data is updated.
      */
     event MentorProfileUpdated(
-        address indexed addr,
+        address indexed owner,
         uint256 indexed mentorId,
         string indexed handle,
         string fullname,
         string position,
         string aboutMe,
         string imageURI,
+        string calendly,
         uint256 usdPerSession,
-        uint256 sessionDuration
+        uint256 sessionDuration,
+        string nonprofit
+    );
+
+    /**
+     * @dev Emitted when the mentoring session is booked.
+     */
+    event SessionBooked(
+        uint256 indexed mentorId,
+        address indexed mentee,
+        bytes32 indexed donationTxHash,
+        uint256 usdDonated,
+        string nonprofit,
+        uint256 timestamp
     );
 }

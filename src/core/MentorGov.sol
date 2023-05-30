@@ -5,9 +5,9 @@ pragma solidity 0.8.17;
 import "openzeppelin-contracts-upgradeable/contracts/proxy/utils/Initializable.sol";
 // import "openzeppelin-contracts-upgradeable/contracts/governance/GovernorUpgradeable.sol";
 
-import {Events} from "../../libraries/Events.sol";
-import {DataTypes} from "../../libraries/DataTypes.sol";
-import {Errors} from "../../libraries/Errors.sol";
+import {Events} from "../libraries/Events.sol";
+import {DataTypes} from "../libraries/DataTypes.sol";
+import {Errors} from "../libraries/Errors.sol";
 
 /**
  * @title MentorGov
@@ -20,10 +20,12 @@ import {Errors} from "../../libraries/Errors.sol";
 abstract contract MentorGov is Initializable {
     address internal _governance;
     address internal _emergencyAdmin;
+    address internal _dispatcher;
 
-    function _initialize(address governance, address emergencyAdmin) internal onlyInitializing {
+    function _initialize(address governance, address emergencyAdmin, address dispatcher) internal onlyInitializing {
         _setGovernance(governance);
         _setEmergencyAdmin(emergencyAdmin);
+        _setDispatcher(dispatcher);
     }
 
     modifier onlyGovernance() {
@@ -33,6 +35,11 @@ abstract contract MentorGov is Initializable {
 
     modifier onlyGovernanceOrEmergencyAdmin() {
         _validateCallerIsGovernanceOrEmergencyAdmin();
+        _;
+    }
+
+    modifier onlyDispatcher() {
+        _validateCallerIsDispatcher();
         _;
     }
 
@@ -48,11 +55,21 @@ abstract contract MentorGov is Initializable {
         emit Events.EmergencyAdminSet(msg.sender, prevEmergencyAdmin, newEmergencyAdmin);
     }
 
+    function _setDispatcher(address newDispatcher) internal {
+        address prevDispatcher = _dispatcher;
+        _dispatcher = newDispatcher;
+        emit Events.DispatcherSet(msg.sender, prevDispatcher, newDispatcher);
+    }
+
     function _validateCallerIsGovernance() internal view {
         if (msg.sender != _governance) revert Errors.NotGovernance();
     }
 
     function _validateCallerIsGovernanceOrEmergencyAdmin() internal view {
         if (msg.sender != _governance && msg.sender != _emergencyAdmin) revert Errors.NotGovernanceOrEmergencyAdmin();
+    }
+
+    function _validateCallerIsDispatcher() internal view {
+        if (msg.sender != _dispatcher) revert Errors.NotDispatcher();
     }
 }

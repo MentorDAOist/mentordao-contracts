@@ -4,9 +4,9 @@ pragma solidity 0.8.17;
 
 import "openzeppelin-contracts-upgradeable/contracts/proxy/utils/Initializable.sol";
 
-import {Events} from "../../libraries/Events.sol";
-import {DataTypes} from "../../libraries/DataTypes.sol";
-import {Errors} from "../../libraries/Errors.sol";
+import {Events} from "../libraries/Events.sol";
+import {DataTypes} from "../libraries/DataTypes.sol";
+import {Errors} from "../libraries/Errors.sol";
 
 /**
  * @title MentorMultiState

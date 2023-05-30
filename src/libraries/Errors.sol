@@ -11,6 +11,7 @@ library Errors {
     error NotHub();
     error NotGovernance();
     error NotGovernanceOrEmergencyAdmin();
+    error NotDispatcher();
     error EmergencyAdminCannotUnpause();
     error NotWhitelistedMentor();
     error NotMentor();
@@ -21,4 +22,5 @@ library Errors {
     error HandleContainsInvalidCharacters();
     error HandleFirstCharInvalid();
     error ImageURILengthInvalid();
+    error ImageURIInvalid();
 }

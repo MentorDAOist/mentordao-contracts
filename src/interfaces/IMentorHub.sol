@@ -20,9 +20,15 @@ interface IMentorHub {
      * @param symbol The symbol to set for the hub NFT.
      * @param governance The governance address to set.
      * @param emergencyAdmin The emergency admin address to set.
+     * @param dispatcher The address of wallet that verifies crosschain donations in BE and reflect it in protocol.
      */
-    function initialize(string calldata name, string calldata symbol, address governance, address emergencyAdmin)
-        external;
+    function initialize(
+        string calldata name,
+        string calldata symbol,
+        address governance,
+        address emergencyAdmin,
+        address dispatcher
+    ) external;
 
     /**
      * @notice Sets the privileged governance role. This function can only be called by the current governance
@@ -39,6 +45,11 @@ interface IMentorHub {
      * @param newEmergencyAdmin The new emergency admin address to set.
      */
     function setEmergencyAdmin(address newEmergencyAdmin) external;
+
+    /**
+     * @notice Sets the dispatcher, which is a permissioned role able to verify crosschain donations and reflect it on protocol.
+     */
+    function setDispatcher(address newDispatcher) external;
 
     /**
      * @notice Sets the protocol state to either a global pause or an unpaused state. This function
@@ -71,6 +82,8 @@ interface IMentorHub {
     function createMentorProfile(DataTypes.Mentor calldata mentorData) external returns (uint256);
 
     function updateMentorProfile(DataTypes.Mentor calldata mentorData) external;
+
+    function emitSessionBooked(DataTypes.BookSessionData calldata vars) external;
 
     function getGovernance() external view returns (address);
 

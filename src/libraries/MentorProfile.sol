@@ -42,8 +42,10 @@ library MentorProfile {
         _mentorById[mentorId].position = mentorData.position;
         _mentorById[mentorId].aboutMe = mentorData.aboutMe;
         _mentorById[mentorId].imageURI = mentorData.imageURI;
+        _mentorById[mentorId].calendly = mentorData.calendly;
         _mentorById[mentorId].usdPerSession = mentorData.usdPerSession;
         _mentorById[mentorId].sessionDuration = mentorData.sessionDuration;
+        _mentorById[mentorId].nonprofit = mentorData.nonprofit;
 
         _emitMentorProfileCreated(mentorId, mentorData);
     }
@@ -70,8 +72,10 @@ library MentorProfile {
         _mentorById[mentorId].position = mentorData.position;
         _mentorById[mentorId].aboutMe = mentorData.aboutMe;
         _mentorById[mentorId].imageURI = mentorData.imageURI;
+        _mentorById[mentorId].calendly = mentorData.calendly;
         _mentorById[mentorId].usdPerSession = mentorData.usdPerSession;
         _mentorById[mentorId].sessionDuration = mentorData.sessionDuration;
+        _mentorById[mentorId].nonprofit = mentorData.nonprofit;
 
         _emitMentorProfileUpdated(mentorId, mentorData);
     }
@@ -103,7 +107,7 @@ library MentorProfile {
                         handleWithAtSymbol,
                         '","description":"',
                         handleWithAtSymbol,
-                        ' - MentorDAO expert","image":"',
+                        ' - Mentor at MentorDAO ","image":"',
                         mentorData.imageURI,
                         '","attributes":[{"trait_type":"id","value":"#',
                         StringsUpgradeable.toString(mentorId),
@@ -111,6 +115,20 @@ library MentorProfile {
                         StringsUpgradeable.toHexString(uint160(owner)),
                         '"},{"trait_type":"handle","value":"',
                         handleWithAtSymbol,
+                        '"},{"trait_type":"fullname","value":"',
+                        mentorData.fullname,
+                        '"},{"trait_type":"position","value":"',
+                        mentorData.position,
+                        '"},{"trait_type":"aboutMe","value":"',
+                        mentorData.aboutMe,
+                        '"},{"trait_type":"calendly","value":"',
+                        mentorData.calendly,
+                        '"},{"trait_type":"usdPerSession","value":"',
+                        StringsUpgradeable.toString(mentorData.usdPerSession),
+                        '"},{"trait_type":"sessionDuration","value":"',
+                        StringsUpgradeable.toString(mentorData.sessionDuration),
+                        '"},{"trait_type":"nonprofit","value":"',
+                        mentorData.nonprofit,
                         '"}]}'
                     )
                 )
@@ -140,33 +158,48 @@ library MentorProfile {
         if (bytes(imageURI).length > Constants.MAX_PROFILE_IMAGE_URI_LENGTH) {
             revert Errors.ImageURILengthInvalid();
         }
+        bytes memory imageURIBytes = bytes(imageURI);
+        uint256 imageURIBytesLength = imageURIBytes.length;
+        for (uint256 i = 0; i < imageURIBytesLength;) {
+            if (imageURIBytes[i] == '"') {
+                // Avoids embedding a user provided imageURI containing double-quotes to prevent injection attacks
+                revert Errors.ImageURIInvalid();
+            }
+            unchecked {
+                ++i;
+            }
+        }
     }
 
     function _emitMentorProfileCreated(uint256 mentorId, DataTypes.Mentor calldata mentorData) internal {
         emit Events.MentorProfileCreated(
-            msg.sender, // Mentor is always the msg sender
+            msg.sender, // Owner is always the msg sender
             mentorId,
             mentorData.handle,
             mentorData.fullname,
             mentorData.position,
             mentorData.aboutMe,
             mentorData.imageURI,
+            mentorData.calendly,
             mentorData.usdPerSession,
-            mentorData.sessionDuration
+            mentorData.sessionDuration,
+            mentorData.nonprofit
         );
     }
 
     function _emitMentorProfileUpdated(uint256 mentorId, DataTypes.Mentor calldata mentorData) internal {
         emit Events.MentorProfileUpdated(
-            msg.sender, // Mentor is always the msg sender
+            msg.sender, // Owner is always the msg sender
             mentorId,
             mentorData.handle,
             mentorData.fullname,
             mentorData.position,
             mentorData.aboutMe,
             mentorData.imageURI,
+            mentorData.calendly,
             mentorData.usdPerSession,
-            mentorData.sessionDuration
+            mentorData.sessionDuration,
+            mentorData.nonprofit
         );
     }
 }
